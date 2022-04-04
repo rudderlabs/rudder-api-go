@@ -2,6 +2,7 @@ package client_test
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/rudderlabs/rudder-api-go/client"
@@ -23,8 +24,9 @@ func TestClientOptionBaseURLEmpty(t *testing.T) {
 
 func TestClientOptionHTTPClient(t *testing.T) {
 	httpClient := testutils.NewMockHTTPClient(t, testutils.Call{
-		Method:         "GET",
-		URL:            "https://example.com/path",
+		Validate: func(req *http.Request) bool {
+			return testutils.ValidateRequest(t, req, "GET", "https://example.com/path", "")
+		},
 		ResponseStatus: 200,
 		ResponseBody:   "test",
 	})
@@ -43,4 +45,25 @@ func TestClientOptionHTTPClient(t *testing.T) {
 func TestClientOptionHTTPClientNil(t *testing.T) {
 	_, err := client.New("some-access-token", client.WithHTTPClient(nil))
 	assert.Equal(t, client.ErrInvalidHTTPClient, err)
+}
+
+func TestClientOptionWithUserAgent(t *testing.T) {
+	httpClient := testutils.NewMockHTTPClient(t, testutils.Call{
+		Validate: func(req *http.Request) bool {
+			return assert.Equal(t, "test-agent", req.UserAgent())
+		},
+		ResponseStatus: 200,
+		ResponseBody:   "test",
+	})
+
+	c, err := client.New("some-access-token",
+		client.WithBaseURL("https://example.com"),
+		client.WithUserAgent("test-agent"),
+		client.WithHTTPClient(httpClient))
+	require.Nil(t, err)
+
+	res, err := c.Do(context.Background(), "GET", "path", nil)
+	require.NoError(t, err)
+	assert.Equal(t, "test", string(res))
+	httpClient.AssertNumberOfCalls()
 }

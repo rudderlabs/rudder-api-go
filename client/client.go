@@ -17,6 +17,7 @@ type HTTPClient interface {
 type Client struct {
 	baseURL     string
 	accessToken string
+	userAgent   string
 	httpClient  HTTPClient
 
 	Sources      *sources
@@ -36,6 +37,7 @@ func New(accessToken string, options ...Option) (*Client, error) {
 		baseURL:     BASE_URL_V2,
 		httpClient:  &http.Client{},
 		accessToken: accessToken,
+		userAgent:   "rudder-api-go/1.0.0",
 	}
 
 	client.Sources = &sources{service: client.service("sources")}
@@ -69,7 +71,7 @@ func (c *Client) Do(ctx context.Context, method, path string, body io.Reader) ([
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("User-Agent", "terraform-provider-rudderstack/v0")
+	req.Header.Add("User-Agent", c.userAgent)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.accessToken))
 
 	res, err := c.httpClient.Do(req)

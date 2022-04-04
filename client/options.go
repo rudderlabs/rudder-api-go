@@ -21,3 +21,10 @@ func WithHTTPClient(httpClient HTTPClient) Option {
 		return nil
 	}
 }
+
+func WithUserAgent(userAgent string) Option {
+	return func(c *Client) error {
+		c.userAgent = userAgent
+		return nil
+	}
+}

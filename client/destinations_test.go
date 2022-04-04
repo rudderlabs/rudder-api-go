@@ -3,6 +3,7 @@ package client_test
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 	"testing"
 	"time"
 
@@ -17,8 +18,9 @@ func TestClientDestinationsList(t *testing.T) {
 
 	calls := []testutils.Call{
 		{
-			Method:         "GET",
-			URL:            "https://api.rudderstack.com/v2/destinations",
+			Validate: func(req *http.Request) bool {
+				return testutils.ValidateRequest(t, req, "GET", "https://api.rudderstack.com/v2/destinations", "")
+			},
 			ResponseStatus: 200,
 			ResponseBody: `{
 				"destinations": [{
@@ -39,8 +41,9 @@ func TestClientDestinationsList(t *testing.T) {
 			}`,
 		},
 		{
-			Method:         "GET",
-			URL:            "https://api.rudderstack.com/v2/destinations?page=2",
+			Validate: func(req *http.Request) bool {
+				return testutils.ValidateRequest(t, req, "GET", "https://api.rudderstack.com/v2/destinations?page=2", "")
+			},
 			ResponseStatus: 200,
 			ResponseBody: `{
 				"destinations": [{
@@ -90,8 +93,9 @@ func TestClientDestinationsGet(t *testing.T) {
 
 	calls := []testutils.Call{
 		{
-			Method:         "GET",
-			URL:            "https://api.rudderstack.com/v2/destinations/some-id",
+			Validate: func(req *http.Request) bool {
+				return testutils.ValidateRequest(t, req, "GET", "https://api.rudderstack.com/v2/destinations/some-id", "")
+			},
 			ResponseStatus: 200,
 			ResponseBody: `{
 				"destination": {
@@ -130,15 +134,15 @@ func TestClientDestinationsCreate(t *testing.T) {
 
 	calls := []testutils.Call{
 		{
-			Method:         "POST",
-			URL:            "https://api.rudderstack.com/v2/destinations",
+			Validate: func(req *http.Request) bool {
+				return testutils.ValidateRequest(t, req, "POST", "https://api.rudderstack.com/v2/destinations", `{
+					"name": "some-name",
+					"type": "some-type",
+					"enabled": true,
+					"config": { "key1": "val1" }
+				}`)
+			},
 			ResponseStatus: 200,
-			RequestBody: `{
-				"name": "some-name",
-				"type": "some-type",
-				"enabled": true,
-				"config": { "key1": "val1" }
-			}`,
 			ResponseBody: `{
 				"destination": {
 					"id": "some-id",
@@ -183,15 +187,15 @@ func TestClientDestinationsUpdate(t *testing.T) {
 
 	calls := []testutils.Call{
 		{
-			Method:         "PUT",
-			URL:            "https://api.rudderstack.com/v2/destinations/some-id",
+			Validate: func(req *http.Request) bool {
+				return testutils.ValidateRequest(t, req, "PUT", "https://api.rudderstack.com/v2/destinations/some-id", `{
+					"name": "some-name",
+					"type": "some-type",
+					"enabled": true,
+					"config": { "key1": "val1" }
+				}`)
+			},
 			ResponseStatus: 200,
-			RequestBody: `{
-				"name": "some-name",
-			 	"type": "some-type",
-				"enabled": true,
-				"config": { "key1": "val1" }
-			}`,
 			ResponseBody: `{
 				"destination": {
 					"id": "some-id",

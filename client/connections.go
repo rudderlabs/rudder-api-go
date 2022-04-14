@@ -9,7 +9,7 @@ type Connection struct {
 	ID            string     `json:"id,omitempty"`
 	SourceID      string     `json:"sourceId"`
 	DestinationID string     `json:"destinationId"`
-	Enabled       bool       `json:"enabled"`
+	IsEnabled     bool       `json:"enabled"`
 	CreatedAt     *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt     *time.Time `json:"updatedAt,omitempty"`
 }

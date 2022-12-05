@@ -22,6 +22,7 @@ type Client struct {
 
 	Sources      *sources
 	Destinations *destinations
+	Connections  *connections
 }
 
 const BASE_URL_V2 = "https://api.rudderstack.com/v2"
@@ -42,6 +43,7 @@ func New(accessToken string, options ...Option) (*Client, error) {
 
 	client.Sources = &sources{service: client.service("sources")}
 	client.Destinations = &destinations{service: client.service("destinations")}
+	client.Connections = &connections{service: client.service("connections")}
 
 	for _, o := range options {
 		if err := o(client); err != nil {
@@ -87,9 +89,11 @@ func (c *Client) Do(ctx context.Context, method, path string, body io.Reader) ([
 	// check if response has an error status code and parse API error accordingly
 	if res.StatusCode < 200 || res.StatusCode > 299 {
 		apiError := &APIError{HTTPStatusCode: res.StatusCode}
-		err := json.Unmarshal(data, apiError)
-		if err != nil {
-			return nil, err
+		if len(data) > 0 {
+			err := json.Unmarshal(data, apiError)
+			if err != nil {
+				return nil, fmt.Errorf("could not parse error response from API: %w", err)
+			}
 		}
 
 		return nil, apiError

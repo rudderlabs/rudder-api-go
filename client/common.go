@@ -1,6 +1,9 @@
 package client
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type Paging struct {
 	Total int    `json:"total"`
@@ -19,5 +22,5 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
-	return e.Message
+	return fmt.Sprintf("http status code: %d, error code: '%s', error: '%s'", e.HTTPStatusCode, e.ErrorCode, e.Message)
 }

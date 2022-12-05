@@ -54,11 +54,11 @@ func (s *destinations) Get(ctx context.Context, id string) (*Destination, error)
 
 func (s *destinations) Create(ctx context.Context, destination *Destination) (*Destination, error) {
 	// copy input and remove fields that should not be in request body without modifying input
-	src := *destination
-	src.ID = ""
+	dst := *destination
+	dst.ID = ""
 
 	response := struct{ Destination *Destination }{}
-	if err := s.create(ctx, &src, &response); err != nil {
+	if err := s.create(ctx, &dst, &response); err != nil {
 		return nil, err
 	}
 

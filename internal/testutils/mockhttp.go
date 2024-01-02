@@ -3,7 +3,6 @@ package testutils
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -61,14 +60,14 @@ func (c *mockHTTPClient) AssertNumberOfCalls() {
 	}
 }
 
-// ValidateRequest is a utility
+// ValidateRequest is a utility function for validating an incoming request
 func ValidateRequest(t *testing.T, req *http.Request, method string, url string, body string) bool {
 	if !assert.Equal(t, method, req.Method) {
 		return false
 	}
 
 	if body != "" {
-		bodyBytes, err := ioutil.ReadAll(req.Body)
+		bodyBytes, err := io.ReadAll(req.Body)
 		require.NoError(t, err)
 		if !assert.JSONEq(t, body, string(bodyBytes)) {
 			return false

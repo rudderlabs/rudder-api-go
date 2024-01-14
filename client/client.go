@@ -23,6 +23,7 @@ type Client struct {
 	RETLSources  *retlSources
 	Destinations *destinations
 	Connections  *connections
+	Accounts     *accounts
 }
 
 const BASE_URL_V2 = "https://api.rudderstack.com/v2"
@@ -44,6 +45,7 @@ func New(accessToken string, options ...Option) (*Client, error) {
 	client.Sources = &sources{service: client.service("sources")}
 	client.Destinations = &destinations{service: client.service("destinations")}
 	client.Connections = &connections{service: client.service("connections")}
+	client.Accounts = &accounts{service: client.service("accounts")}
 	client.RETLSources = &retlSources{service: client.service("retl-sources")}
 
 	for _, o := range options {

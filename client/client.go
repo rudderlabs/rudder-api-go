@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -21,8 +20,10 @@ type Client struct {
 	httpClient  HTTPClient
 
 	Sources      *sources
+	RETLSources  *retlSources
 	Destinations *destinations
 	Connections  *connections
+	Accounts     *accounts
 }
 
 const BASE_URL_V2 = "https://api.rudderstack.com/v2"
@@ -44,6 +45,8 @@ func New(accessToken string, options ...Option) (*Client, error) {
 	client.Sources = &sources{service: client.service("sources")}
 	client.Destinations = &destinations{service: client.service("destinations")}
 	client.Connections = &connections{service: client.service("connections")}
+	client.Accounts = &accounts{service: client.service("accounts")}
+	client.RETLSources = &retlSources{service: client.service("retl-sources")}
 
 	for _, o := range options {
 		if err := o(client); err != nil {
@@ -81,7 +84,7 @@ func (c *Client) Do(ctx context.Context, method, path string, body io.Reader) ([
 		return nil, err
 	}
 	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}

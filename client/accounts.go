@@ -2,19 +2,20 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 )
 
 type Account struct {
-	ID          string                 `json:"id,omitempty"`
-	UserID      string                 `json:"userId,omitempty"`
-	WorkspaceID string                 `json:"workspaceId,omitempty"`
-	Name        string                 `json:"name"`
-	Type        string                 `json:"type"`
-	Category    string                 `json:"category"`
-	Options     map[string]interface{} `json:"options,omitempty"`
-	CreatedAt   *time.Time             `json:"createdAt,omitempty"`
-	UpdatedAt   *time.Time             `json:"updatedAt,omitempty"`
+	ID          string          `json:"id,omitempty"`
+	UserID      string          `json:"userId,omitempty"`
+	WorkspaceID string          `json:"workspaceId,omitempty"`
+	Name        string          `json:"name"`
+	Type        string          `json:"type"`
+	Category    string          `json:"category"`
+	Options     json.RawMessage `json:"options"`
+	CreatedAt   *time.Time      `json:"createdAt,omitempty"`
+	UpdatedAt   *time.Time      `json:"updatedAt,omitempty"`
 }
 
 type accounts struct {

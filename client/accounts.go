@@ -18,6 +18,11 @@ type Account struct {
 	UpdatedAt   *time.Time      `json:"updatedAt,omitempty"`
 }
 
+type AccountWithSecret struct {
+	Account
+	Secret json.RawMessage `json:"secret"`
+}
+
 type accounts struct {
 	*service
 }
@@ -54,7 +59,7 @@ func (s *accounts) Get(ctx context.Context, id string) (*Account, error) {
 	return response.Account, nil
 }
 
-func (s *accounts) Create(ctx context.Context, account *Account) (*Account, error) {
+func (s *accounts) Create(ctx context.Context, account *AccountWithSecret) (*Account, error) {
 	// copy input and remove fields that should not be in request body without modifying input
 	act := *account
 	act.ID = ""
@@ -67,7 +72,7 @@ func (s *accounts) Create(ctx context.Context, account *Account) (*Account, erro
 	return response.Account, nil
 }
 
-func (s *accounts) Update(ctx context.Context, account *Account) (*Account, error) {
+func (s *accounts) Update(ctx context.Context, account *AccountWithSecret) (*Account, error) {
 	// copy input and remove ID from request body without modifying input
 	act := *account
 	act.ID = ""
